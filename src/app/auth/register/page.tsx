@@ -109,15 +109,15 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-md w-full"
       >
-        <Card className="shadow-xl">
-          <CardHeader className="text-center bg-white rounded-t-lg">
+        <Card className="shadow-xl bg-white ">
+          <CardHeader className="text-center rounded-t-lg">
             <Link href="/" className="text-3xl font-bold text-orange-500 mb-4 block">
               Bazario
             </Link>
@@ -300,7 +300,7 @@ const RegisterPage: React.FC = () => {
             </form>
 
             {/* Avantages selon le rôle */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h4 className="text-sm font-medium text-gray-900 mb-2">
                 {selectedRole === 'vendor' ? 'Avantages vendeur :' : 'Avantages acheteur :'}
               </h4>
@@ -321,10 +321,10 @@ const RegisterPage: React.FC = () => {
                   </>
                 )}
               </ul>
-            </div>
+            </div> */}
 
             {/* Lien vers connexion */}
-            <div className="mt-6 text-center">
+            <div className="text-center">
               <p className="text-sm text-gray-600">
                 Déjà un compte ?{' '}
                 <Link
