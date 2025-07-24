@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,7 +17,6 @@ import {
   HelpCircle,
   LogOut,
   Store,
-  Heart,
   MessageSquare
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
@@ -34,8 +33,22 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
+  // Debug en mode développement
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🏗️ VendorLayout - Session:', {
+        status,
+        user: session?.user?.email,
+        role: session?.user?.role,
+        isApproved: session?.user?.vendorInfo?.isApproved,
+        pathname
+      });
+    }
+  }, [session, status, pathname]);
+
+  // Navigation pour les vendeurs
   const navigation = [
     {
       name: 'Dashboard',
@@ -131,6 +144,11 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
     await signOut({ callbackUrl: '/' });
   };
 
+  // Si on est sur la page pending-approval, ne pas afficher le layout normal
+  if (pathname === '/dashboard/vendor/pending-approval') {
+    return <>{children}</>;
+  }
+
   return (
     <ProtectedRoute allowedRoles={['vendor', 'admin']}>
       <div className="min-h-screen bg-gray-50">
@@ -144,7 +162,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
                   <Store className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">ArtisanHub</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">Bazario</h2>
                   <p className="text-xs text-gray-500">Dashboard Vendeur</p>
                 </div>
               </Link>
@@ -160,7 +178,9 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
                   <p className="text-sm font-medium text-gray-900">
                     {session?.user?.name}
                   </p>
-                  <p className="text-xs text-gray-500">Artisan céramiste</p>
+                  <p className="text-xs text-gray-500">
+                    {session?.user?.vendorInfo?.businessName || 'Artisan'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -251,7 +271,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
                     <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
                       <Store className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-lg font-semibold">ArtisanHub</span>
+                    <span className="text-lg font-semibold">Bazario</span>
                   </Link>
                   <Button
                     variant="ghost"
@@ -273,7 +293,9 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
                         <p className="text-sm font-medium text-gray-900">
                           {session?.user?.name}
                         </p>
-                        <p className="text-xs text-gray-500">Artisan céramiste</p>
+                        <p className="text-xs text-gray-500">
+                          {session?.user?.vendorInfo?.businessName || 'Artisan'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -360,8 +382,10 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
                       <>
                         <span className="text-gray-400">/</span>
                         <li className="text-gray-900 font-medium">
-                          {/* {pathname.split('/').pop()?.charAt(0).toUpperCase() + 
-                           pathname.split('/').pop()?.slice(1) || ''} */}
+                          {(() => {
+                            const lastSegment = pathname.split('/').pop() || '';
+                            return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
+                          })()}
                         </li>
                       </>
                     )}
