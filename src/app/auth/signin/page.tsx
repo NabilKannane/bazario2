@@ -1,4 +1,3 @@
-// src/app/auth/signin/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -33,7 +32,6 @@ const SignInPage: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  // Afficher le message de succès si l'utilisateur vient de créer un compte
   useEffect(() => {
     if (message === 'account-created') {
       setSuccess('Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
@@ -54,22 +52,45 @@ const SignInPage: React.FC = () => {
 
       if (result?.error) {
         setError('Email ou mot de passe incorrect');
-      } else if (result?.ok) {
-        setSuccess('Connexion réussie ! Redirection...');
+      } else if (result?.ok) {        
+        // Récupérer la session pour obtenir le rôle
+        const session = await getSession();
         
-        // Attendre un peu pour que l'utilisateur voie le message de succès
-        setTimeout(async () => {
-          const session = await getSession();
+        if (session?.user?.role) {
+          const role = session.user.role;
           
-          // Rediriger selon le rôle de l'utilisateur
-          if (session?.user?.role === 'admin') {
-            router.push('/admin');
-          } else if (session?.user?.role === 'vendor') {
-            router.push('/dashboard/vendor');
-          } else {
+          // Messages de succès personnalisés
+          const welcomeMessages = {
+            admin: 'Connexion réussie ! Redirection vers l\'administration...',
+            vendor: 'Bienvenue dans votre espace vendeur ! Redirection...',
+            buyer: 'Connexion réussie ! Redirection vers votre tableau de bord...'
+          };
+          
+          setSuccess(welcomeMessages[role as keyof typeof welcomeMessages] || 'Connexion réussie !');
+          
+          // Redirection automatique basée sur le rôle
+          setTimeout(() => {
+            switch (role) {
+              case 'admin':
+                router.push('/admin');
+                break;
+              case 'vendor':
+                router.push('/dashboard/vendor');
+                break;
+              case 'buyer':
+                router.push('/dashboard/buyer');
+                break;
+              default:
+                router.push(callbackUrl);
+            }
+          }, 1500);
+        } else {
+          // Fallback si pas de rôle
+          setSuccess('Connexion réussie ! Redirection...');
+          setTimeout(() => {
             router.push(callbackUrl);
-          }
-        }, 1000);
+          }, 1500);
+        }
       }
     } catch (error) {
       setError('Une erreur est survenue lors de la connexion');
@@ -183,6 +204,16 @@ const SignInPage: React.FC = () => {
               </Button>
             </form>
 
+            {/* Test accounts info */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h4 className="text-sm font-medium text-gray-900 mb-2">Comptes de test :</h4>
+              <div className="space-y-1 text-xs text-gray-600">
+                <p><strong>Vendeur :</strong> vendor@test.com / password123</p>
+                <p><strong>Acheteur :</strong> buyer@test.com / password123</p>
+                <p><strong>Admin :</strong> admin@test.com / password123</p>
+              </div>
+            </div>
+
             {/* Séparateur */}
             <div className="mt-6">
               <div className="relative">
@@ -252,5 +283,6 @@ const SignInPage: React.FC = () => {
     </div>
   );
 };
+
 
 export default SignInPage;
