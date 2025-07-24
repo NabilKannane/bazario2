@@ -66,31 +66,11 @@ const mockBuyerData = {
       image: 'https://images.unsplash.com/photo-1610701596061-2ecf227e85b2',
       rating: 4.6,
     },
-  ],
-  recommendations: [
-    {
-      id: '1',
-      name: 'Plateau en bois sculpté',
-      vendor: 'Menuiserie Dupont',
-      price: 78.50,
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96',
-      rating: 4.9,
-      badge: 'Nouveau',
-    },
-    {
-      id: '2',
-      name: 'Miroir décoratif',
-      vendor: 'Atelier Reflets',
-      price: 234.00,
-      image: 'https://images.unsplash.com/photo-1610701596061-2ecf227e85b2',
-      rating: 4.7,
-      badge: 'Tendance',
-    },
-  ],
+  ]
 };
 
 const BuyerDashboardPage: React.FC = () => {
-  const { profile, recentOrders, wishlist, recommendations } = mockBuyerData;
+  const { profile, recentOrders, wishlist } = mockBuyerData;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -112,7 +92,7 @@ const BuyerDashboardPage: React.FC = () => {
             className="flex items-center justify-between"
           >
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-16 h-16 bg-orange-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
                 {profile.avatar}
               </div>
               <div>
@@ -253,54 +233,6 @@ const BuyerDashboardPage: React.FC = () => {
               </Card>
             </motion.div>
 
-            {/* Recommandations */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <TrendingUp className="w-5 h-5 mr-2" />
-                    Recommandé pour vous
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {recommendations.map((item) => (
-                      <div key={item.id} className="group cursor-pointer">
-                        <div className="relative aspect-square rounded-lg overflow-hidden mb-3">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                          />
-                          {item.badge && (
-                            <Badge className="absolute top-2 right-2 bg-orange-500">
-                              {item.badge}
-                            </Badge>
-                          )}
-                        </div>
-                        <h4 className="font-medium text-gray-900 group-hover:text-orange-600 transition-colors">
-                          {item.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-1">{item.vendor}</p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                            <span className="text-sm text-gray-600">{item.rating}</span>
-                          </div>
-                          <span className="font-semibold text-orange-600">
-                            {formatPrice(item.price)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
           </div>
 
           {/* Sidebar */}
@@ -370,25 +302,25 @@ const BuyerDashboardPage: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Link href="/marketplace">
-                    <Button className="w-full justify-start" variant="outline">
+                    <Button className="w-full mb-2 justify-start" variant="outline">
                       <ShoppingBag className="w-4 h-4 mr-3" />
                       Explorer la marketplace
                     </Button>
                   </Link>
                   <Link href="/dashboard/buyer/orders">
-                    <Button className="w-full justify-start" variant="outline">
+                    <Button className="w-full mb-2 justify-start" variant="outline">
                       <Package className="w-4 h-4 mr-3" />
                       Mes commandes
                     </Button>
                   </Link>
                   <Link href="/dashboard/buyer/wishlist">
-                    <Button className="w-full justify-start" variant="outline">
+                    <Button className="w-full mb-2 justify-start" variant="outline">
                       <Heart className="w-4 h-4 mr-3" />
                       Ma liste de souhaits
                     </Button>
                   </Link>
                   <Link href="/dashboard/buyer/messages">
-                    <Button className="w-full justify-start" variant="outline">
+                    <Button className="w-full mb-2 justify-start" variant="outline">
                       <Gift className="w-4 h-4 mr-3" />
                       Mes messages
                     </Button>
@@ -403,7 +335,7 @@ const BuyerDashboardPage: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+              {/* <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Star className="w-6 h-6 text-white" />
@@ -420,7 +352,7 @@ const BuyerDashboardPage: React.FC = () => {
                     </Button>
                   </Link>
                 </CardContent>
-              </Card>
+              </Card> */}
             </motion.div>
           </div>
         </div>

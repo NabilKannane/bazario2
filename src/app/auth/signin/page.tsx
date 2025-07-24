@@ -104,16 +104,16 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-md w-full"
       >
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-white">
           <CardHeader className="text-center bg-white rounded-t-lg">
-            <Link href="/" className="text-3xl font-bold text-orange-500 mb-4 block">
+            <Link href="/" className="text-3xl font-bold text-orange-900 mb-4 block">
               Bazario
             </Link>
             <CardTitle className="text-2xl font-bold text-gray-900">
@@ -187,7 +187,7 @@ const SignInPage: React.FC = () => {
                 </label>
                 <Link
                   href="/auth/forgot-password"
-                  className="text-sm text-orange-600 hover:text-orange-500 font-medium"
+                  className="text-sm text-orange-800 hover:text-orange-700 font-mediumm transition duration-100 ease-in-out"
                 >
                   Mot de passe oublié ?
                 </Link>
@@ -195,7 +195,7 @@ const SignInPage: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-stone-700 hover:bg-orange-700 text-white"
                 loading={isLoading}
                 disabled={isLoading}
                 size="lg"
@@ -204,18 +204,8 @@ const SignInPage: React.FC = () => {
               </Button>
             </form>
 
-            {/* Test accounts info */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">Comptes de test :</h4>
-              <div className="space-y-1 text-xs text-gray-600">
-                <p><strong>Vendeur :</strong> vendor@test.com / password123</p>
-                <p><strong>Acheteur :</strong> buyer@test.com / password123</p>
-                <p><strong>Admin :</strong> admin@test.com / password123</p>
-              </div>
-            </div>
-
             {/* Séparateur */}
-            <div className="mt-6">
+            <div className="mt-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
@@ -261,7 +251,7 @@ const SignInPage: React.FC = () => {
                 Pas encore de compte ?{' '}
                 <Link
                   href="/auth/register"
-                  className="font-medium text-orange-600 hover:text-orange-500"
+                  className="font-medium text-orange-700 hover:text-orange-600 transform delay-500 transition-colors"
                 >
                   Créer un compte
                 </Link>

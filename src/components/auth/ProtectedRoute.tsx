@@ -20,7 +20,10 @@ interface ProtectedRouteProps {
 
 type VendorInfo = {
   isApproved?: boolean;
-  // add other vendor-specific properties if needed
+  businessName?: string;
+  specialties?: string[];
+  rating?: number;
+  totalSales?: number;
 };
 
 type SessionUser = {
@@ -35,7 +38,6 @@ type SessionUser = {
 
 type SessionType = {
   user: SessionUser;
-  // add other session properties if needed
 };
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -53,14 +55,24 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   useEffect(() => {
     const checkAccess = async () => {
+      // Attendre que la session soit chargée
       if (status === 'loading') {
-        return; // Attendre que la session soit chargée
+        return;
       }
+
+      console.log('🔍 ProtectedRoute - Checking access:', {
+        status,
+        user: session?.user?.email,
+        role: session?.user?.role,
+        currentPath: window.location.pathname,
+        allowedRoles
+      });
 
       // Si pas de session et une route protégée
       if (status === 'unauthenticated') {
         console.log('🔒 User not authenticated, redirecting to signin');
-        router.push(`${fallbackPath}?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+        const currentPath = window.location.pathname;
+        router.push(`${fallbackPath}?callbackUrl=${encodeURIComponent(currentPath)}`);
         return;
       }
 
@@ -68,13 +80,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       if (session?.user) {
         const userRole = session.user.role;
         const isVerified = session.user.isVerified;
+        const currentPath = window.location.pathname;
 
-        console.log('🔍 Checking access for user:', {
-          email: session.user.email,
-          role: userRole,
+        console.log('🔍 Checking permissions:', {
+          userRole,
           isVerified,
           allowedRoles,
-          requireVerification
+          requireVerification,
+          currentPath,
+          vendorInfo: session.user.vendorInfo
         });
 
         // Vérifier si le rôle est autorisé
@@ -93,16 +107,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         }
 
         // Vérifications spéciales pour les vendeurs
-        if (session?.user?.role === 'vendor') {
-        const isApproved = session.user.vendorInfo?.isApproved;
+        if (userRole === 'vendor') {
+          const isApproved = session.user.vendorInfo?.isApproved;
+          
+          console.log('🏪 Vendor check:', {
+            isApproved,
+            currentPath,
+            vendorInfo: session.user.vendorInfo
+          });
 
-        if (!isApproved) {
-            console.log('❌ Vendor not approved yet');
+          // Si on est déjà sur la page pending-approval, ne pas rediriger
+          if (currentPath === '/dashboard/vendor/pending-approval') {
+            console.log('📍 Already on pending approval page');
+            setIsChecking(false);
+            return;
+          }
+
+          // Si le vendeur n'est pas approuvé, rediriger vers pending-approval
+          if (!isApproved) {
+            console.log('❌ Vendor not approved, redirecting to pending approval');
             router.push('/dashboard/vendor/pending-approval');
             return;
+          }
         }
-        }
-
 
         console.log('✅ Access granted');
       }
@@ -112,6 +139,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     checkAccess();
   }, [session, status, router, allowedRoles, requireVerification, fallbackPath]);
+
+  // Debug: Afficher le statut en mode développement
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🛡️ ProtectedRoute render:', {
+      status,
+      isChecking,
+      accessDenied,
+      user: session?.user?.email,
+      role: session?.user?.role,
+      vendorApproved: session?.user?.vendorInfo?.isApproved
+    });
+  }
 
   // Composant de chargement
   const LoadingComponent = loadingComponent || (
@@ -130,6 +169,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         <p className="text-gray-600">
           Merci de patienter pendant que nous vérifions vos permissions.
         </p>
+        
+        {/* Debug info en développement */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-4 bg-yellow-100 rounded-lg text-left text-sm text-yellow-800">
+            <p><strong>Status:</strong> {status}</p>
+            <p><strong>User:</strong> {session?.user?.email || 'None'}</p>
+            <p><strong>Role:</strong> {session?.user?.role || 'None'}</p>
+            <p><strong>Vendor Approved:</strong> {session?.user?.vendorInfo?.isApproved ? 'Yes' : 'No'}</p>
+            <p><strong>Current Path:</strong> {typeof window !== 'undefined' ? window.location.pathname : 'Unknown'}</p>
+          </div>
+        )}
       </motion.div>
     </div>
   );

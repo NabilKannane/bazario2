@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   Clock, 
@@ -21,7 +22,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { useUIStore } from '@/store/useUIStore';
 import Link from 'next/link';
 
 // Timeline des étapes d'approbation
@@ -57,9 +57,26 @@ const approvalSteps = [
 ];
 
 const PendingApprovalPage: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { addNotification } = useUIStore();
+  const [pageLoaded, setPageLoaded] = useState(false);
+
+  // Debug: Afficher les informations de session
+  useEffect(() => {
+    console.log('🔍 PendingApproval - Session status:', status);
+    console.log('🔍 PendingApproval - Session data:', session);
+    
+    if (status !== 'loading') {
+      setPageLoaded(true);
+    }
+
+    // Vérifier si l'utilisateur est déjà approuvé
+    if (session?.user?.vendorInfo?.isApproved) {
+      console.log('✅ Vendor is approved, redirecting to dashboard');
+      router.push('/dashboard/vendor');
+    }
+  }, [session, status, router]);
 
   const handleRefreshStatus = async () => {
     setIsRefreshing(true);
@@ -68,52 +85,42 @@ const PendingApprovalPage: React.FC = () => {
       // Simuler une vérification du statut
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Ici, vous feriez un appel API pour vérifier le statut réel
-      const response = await fetch('/api/user/vendor-status', {
-        method: 'GET',
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.isApproved) {
-          addNotification({
-            type: 'success',
-            title: '🎉 Félicitations !',
-            message: 'Votre compte vendeur a été approuvé !',
-            duration: 6000,
-          });
-          // Rediriger vers le dashboard vendeur
-          window.location.href = '/dashboard/vendor';
-        } else {
-          addNotification({
-            type: 'info',
-            title: 'Statut inchangé',
-            message: 'Votre demande est toujours en cours d\'examen.',
-          });
-        }
-      }
+      // Recharger la session
+      window.location.reload();
     } catch (error) {
-      addNotification({
-        type: 'error',
-        title: 'Erreur',
-        message: 'Impossible de vérifier le statut pour le moment.',
-      });
+      console.error('Erreur lors du refresh:', error);
     } finally {
       setIsRefreshing(false);
     }
   };
 
-  const handleContactSupport = () => {
-    addNotification({
-      type: 'info',
-      title: 'Contact envoyé',
-      message: 'Un email a été envoyé à notre équipe support.',
-    });
-  };
-
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' });
   };
+
+  // Afficher un loader pendant le chargement de la session
+  if (status === 'loading' || !pageLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement de votre statut...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Vérifier si l'utilisateur est connecté
+  if (status === 'unauthenticated' || !session) {
+    router.push('/auth/signin');
+    return null;
+  }
+
+  // Vérifier si l'utilisateur est un vendeur
+  if (session.user.role !== 'vendor') {
+    router.push('/dashboard/buyer');
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
@@ -138,6 +145,29 @@ const PendingApprovalPage: React.FC = () => {
               Votre demande pour devenir vendeur sur Bazario est actuellement examinée par notre équipe.
             </p>
           </motion.div>
+
+          {/* Informations de debug (en mode développement) */}
+          {process.env.NODE_ENV === 'development' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <Card className="bg-yellow-50 border-yellow-200">
+                <CardHeader>
+                  <CardTitle className="text-yellow-800">Debug Info (Dev Mode)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-sm text-yellow-700 space-y-2">
+                    <p><strong>User Role:</strong> {session.user.role}</p>
+                    <p><strong>Is Verified:</strong> {session.user.isVerified ? 'Yes' : 'No'}</p>
+                    <p><strong>Vendor Info:</strong> {JSON.stringify(session.user.vendorInfo || 'null')}</p>
+                    <p><strong>Is Approved:</strong> {session.user.vendorInfo?.isApproved ? 'Yes' : 'No'}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
 
           {/* Statut actuel */}
           <motion.div
@@ -290,14 +320,12 @@ const PendingApprovalPage: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
-                    <Button
-                      onClick={handleContactSupport}
-                      variant="outline"
-                      className="w-full justify-start"
-                    >
-                      <Mail className="w-4 h-4 mr-3" />
-                      Contacter le support
-                    </Button>
+                    <Link href="/contact?subject=vendor-approval">
+                      <Button variant="outline" className="w-full justify-start">
+                        <Mail className="w-4 h-4 mr-3" />
+                        Contacter le support
+                      </Button>
+                    </Link>
                     
                     <Link href="/help/vendor-approval">
                       <Button variant="outline" className="w-full justify-start">
@@ -306,7 +334,7 @@ const PendingApprovalPage: React.FC = () => {
                       </Button>
                     </Link>
                     
-                    <Link href="/marketplace">
+                    <Link href="/products">
                       <Button variant="outline" className="w-full justify-start">
                         <Store className="w-4 h-4 mr-3" />
                         Explorer la marketplace
@@ -327,100 +355,43 @@ const PendingApprovalPage: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Conseils pendant l'attente */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mb-8"
-          >
-            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-              <CardHeader>
-                <CardTitle className="text-green-900">
-                  💡 Préparez-vous pour le succès !
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-green-800 mb-3">📚 Ressources utiles</h4>
-                    <ul className="space-y-2 text-green-700 text-sm">
-                      <li>• <Link href="/help/seller-guide" className="hover:underline">Guide du vendeur</Link></li>
-                      <li>• <Link href="/help/product-photos" className="hover:underline">Conseils photo produits</Link></li>
-                      <li>• <Link href="/help/pricing-strategy" className="hover:underline">Stratégies de prix</Link></li>
-                      <li>• <Link href="/help/shipping" className="hover:underline">Gestion des livraisons</Link></li>
-                    </ul>
+          {/* Actions temporaires pour les tests en développement */}
+          {process.env.NODE_ENV === 'development' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mb-8"
+            >
+              <Card className="bg-yellow-50 border-yellow-200">
+                <CardHeader>
+                  <CardTitle className="text-yellow-800">Actions de test (Dev Mode)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => {
+                        // Simuler l'approbation pour les tests
+                        alert('En production, ceci serait géré par l\'admin.');
+                      }}
+                      className="w-full bg-green-500 hover:bg-green-600"
+                    >
+                      🧪 Simuler l'approbation (Dev)
+                    </Button>
+                    <p className="text-xs text-yellow-700">
+                      Cette option n'est disponible qu'en mode développement pour les tests.
+                    </p>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-green-800 mb-3">🎯 Prochaines étapes</h4>
-                    <ul className="space-y-2 text-green-700 text-sm">
-                      <li>• Préparez vos premières créations</li>
-                      <li>• Réfléchissez à votre stratégie de marque</li>
-                      <li>• Planifiez vos méthodes de livraison</li>
-                      <li>• Rejoignez notre communauté Discord</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
 
-          {/* Témoignages de vendeurs */}
+          {/* Footer avec contact */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="mb-8"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center">
-                  🌟 Ce que disent nos artisans
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-gray-700 italic mb-3">
-                      "L'équipe de Bazario m'a accompagnée dès le début. 
-                      En 3 mois, j'ai déjà vendu plus de 50 créations !"
-                    </p>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                        M
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">Marie L.</p>
-                        <p className="text-gray-600 text-sm">Céramiste</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-gray-700 italic mb-3">
-                      "Le processus d'approbation est rapide et l'interface 
-                      vendeur est très intuitive. Je recommande !"
-                    </p>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                        P
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">Pierre M.</p>
-                        <p className="text-gray-600 text-sm">Ébéniste</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Footer */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
             className="text-center"
           >
             <Card className="bg-gray-900 text-white">
@@ -431,7 +402,7 @@ const PendingApprovalPage: React.FC = () => {
                 <p className="text-gray-300 mb-4">
                   Notre équipe support est disponible du lundi au vendredi, 9h-18h
                 </p>
-                <div className="flex justify-center space-x-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <Button variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
                     <Mail className="w-4 h-4 mr-2" />
                     support@bazario.fr
