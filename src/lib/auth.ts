@@ -1,3 +1,4 @@
+// src/lib/auth.ts
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
@@ -87,7 +88,8 @@ export const authOptions: NextAuthOptions = {
                 lastName: profile.family_name || profile.name?.split(' ').slice(1).join(' ') || '',
                 avatar: profile.picture,
                 isVerified: true, // Google accounts are pre-verified
-                role: 'buyer' // Default role
+                role: 'buyer', // Default role
+                password: 'google-oauth-user' // Placeholder password for OAuth users
               });
             }
             
@@ -95,9 +97,13 @@ export const authOptions: NextAuthOptions = {
               id: user._id.toString(),
               email: user.email,
               name: `${user.firstName} ${user.lastName}`,
+              firstName: user.firstName,
+              lastName: user.lastName,
               role: user.role,
               avatar: user.avatar,
               isVerified: user.isVerified,
+              vendorInfo: user.vendorInfo,
+              profile: user.profile,
             };
           }
         })]
@@ -108,10 +114,11 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 jours
+    updateAge: 24 * 60 * 60, // 24 heures
   },
   
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account }) {
       console.log('🎫 JWT Callback - Token:', token.sub, 'User:', user?.email);
       
       if (user) {
@@ -168,6 +175,11 @@ export const authOptions: NextAuthOptions = {
         return true;
       }
       
+      if (account?.provider === 'google') {
+        // Vérifier que l'utilisateur Google a bien été créé/trouvé
+        return !!user;
+      }
+      
       return true;
     },
     
@@ -208,6 +220,11 @@ export const authOptions: NextAuthOptions = {
         role: session.user?.role
       });
     },
+  },
+  
+  // Configuration JWT personnalisée si nécessaire
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
   
   debug: process.env.NODE_ENV === 'development',
