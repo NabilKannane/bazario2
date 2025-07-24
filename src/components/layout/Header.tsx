@@ -75,7 +75,7 @@ const Header: React.FC = () => {
           >
             <Link 
               href="/" 
-              className="text-2xl font-bold text-orange-500 hover:text-orange-600 transition-colors"
+              className="text-2xl font-bold text-gray-800 hover:text-orange-900 transition-colors"
             >
               Bazario
             </Link>
@@ -90,7 +90,7 @@ const Header: React.FC = () => {
                 className={cn(
                   "px-3 py-2 text-sm font-medium rounded-md transition-colors",
                   isActiveLink(item.href)
-                    ? "text-orange-600 bg-orange-50"
+                    ? "text-orange-900 bg-orange-50"
                     : "text-gray-700 hover:text-orange-500 hover:bg-gray-50"
                 )}
               >
@@ -108,7 +108,7 @@ const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher des produits..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-900 focus:border-transparent transition-all"
               />
             </form>
           </div>
@@ -134,7 +134,7 @@ const Header: React.FC = () => {
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="w-5 h-5" />
                 {itemCount > 0 && (
-                  <Badge className="absolute -top-2 -right-2 w-5 h-5 text-xs bg-orange-500">
+                  <Badge className="absolute -top-2 -right-2 w-5 h-5 text-xs bg-orange-900">
                     {itemCount}
                   </Badge>
                 )}
@@ -256,8 +256,8 @@ const Header: React.FC = () => {
                   className={cn(
                     "block px-3 py-2 text-base font-medium rounded-md transition-colors",
                     isActiveLink(item.href)
-                      ? "text-orange-600 bg-orange-50"
-                      : "text-gray-700 hover:text-orange-500 hover:bg-gray-50"
+                      ? "text-orange-900 bg-orange-50"
+                      : "text-gray-700 hover:text-orange-900 hover:bg-gray-50"
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -274,7 +274,7 @@ const Header: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Rechercher..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-900 focus:border-transparent"
                   />
                 </form>
               </div>
@@ -285,14 +285,14 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       href={getUserDashboardLink()}
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
                       href="/profile"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mon Profil
@@ -302,7 +302,7 @@ const Header: React.FC = () => {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md"
+                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
                     >
                       Se déconnecter
                     </button>
@@ -311,14 +311,14 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       href="/auth/signin"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Se connecter
                     </Link>
                     <Link
                       href="/auth/register"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Créer un compte

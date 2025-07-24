@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-500 to-primary-600">
+      <section className="relative bg-gradient-to-r from-orange-200 to-gray-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -67,11 +67,11 @@ const HomePage: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Bazario
+            <h1 className="text-4xl md:text-6xl font-bold mb-14">
+              BAZARIO
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-primary-100">
-              Des créations uniques faites avec passion par nos artisans
+            <p className="text-xl md:text-2xl mb-16 text-primary-100">
+              La ou tradition et digital se rencontre
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary">

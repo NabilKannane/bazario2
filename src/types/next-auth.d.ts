@@ -9,6 +9,21 @@ declare module 'next-auth' {
       role: string;
       isVerified: boolean;
       avatar?: string;
+      firstName?: string;
+      lastName?: string;
+      vendorInfo?: {
+        isApproved?: boolean;
+        businessName?: string;
+        specialties?: string[];
+        rating?: number;
+        totalSales?: number;
+      };
+      profile?: {
+        phone?: string;
+        bio?: string;
+        address?: any;
+        socialLinks?: any;
+      };
     };
   }
 
@@ -16,6 +31,10 @@ declare module 'next-auth' {
     role: string;
     isVerified: boolean;
     avatar?: string;
+    firstName?: string;
+    lastName?: string;
+    vendorInfo?: any;
+    profile?: any;
   }
 }
 
@@ -23,5 +42,9 @@ declare module 'next-auth/jwt' {
   interface JWT {
     role: string;
     isVerified: boolean;
+    firstName?: string;
+    lastName?: string;
+    vendorInfo?: any;
+    profile?: any;
   }
 }
