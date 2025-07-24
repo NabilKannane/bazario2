@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -17,6 +17,10 @@ const Header: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Refs pour gérer les clics extérieurs
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  
   const pathname = usePathname();
   const { data: session } = useSession();
   const { itemCount } = useCart();
@@ -28,6 +32,38 @@ const Header: React.FC = () => {
     { name: 'Catégories', href: '/categories' },
     { name: 'Artisans', href: '/artisans' },
   ];
+
+  // Fermer les dropdowns quand on clique à l'extérieur
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Fermer les menus avec Escape
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsUserMenuOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,7 +178,7 @@ const Header: React.FC = () => {
             </Link>
 
             {/* Menu utilisateur */}
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -157,14 +193,15 @@ const Header: React.FC = () => {
                 )}
               </Button>
 
-              {/* Dropdown menu utilisateur */}
+              {/* Dropdown menu utilisateur - CORRIGÉ */}
               <AnimatePresence>
                 {isUserMenuOpen && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: -10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-[60]"
                   >
                     <div className="py-1">
                       {session ? (
@@ -176,7 +213,7 @@ const Header: React.FC = () => {
                           
                           <Link
                             href={getUserDashboardLink()}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
                             <Settings className="w-4 h-4 mr-2" />
@@ -185,7 +222,7 @@ const Header: React.FC = () => {
                           
                           <Link
                             href="/profile"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
                             <User className="w-4 h-4 mr-2" />
@@ -194,7 +231,7 @@ const Header: React.FC = () => {
                           
                           <button
                             onClick={handleSignOut}
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                           >
                             <LogOut className="w-4 h-4 mr-2" />
                             Se déconnecter
@@ -204,14 +241,14 @@ const Header: React.FC = () => {
                         <>
                           <Link
                             href="/auth/signin"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
                             Se connecter
                           </Link>
                           <Link
                             href="/auth/register"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
                             Créer un compte
@@ -237,15 +274,16 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Menu mobile */}
+      {/* Menu mobile - CORRIGÉ */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            ref={mobileMenuRef}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-t bg-white overflow-hidden"
+            className="md:hidden border-t bg-white overflow-hidden z-[55]"
           >
             <div className="px-4 py-2 space-y-1">
               {/* Navigation mobile */}
@@ -285,14 +323,14 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       href={getUserDashboardLink()}
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
                       href="/profile"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mon Profil
@@ -302,7 +340,7 @@ const Header: React.FC = () => {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
+                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md transition-colors"
                     >
                       Se déconnecter
                     </button>
@@ -311,14 +349,14 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       href="/auth/signin"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Se connecter
                     </Link>
                     <Link
                       href="/auth/register"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-900 hover:bg-gray-50 rounded-md transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Créer un compte
@@ -330,17 +368,6 @@ const Header: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Overlay pour fermer les menus */}
-      {(isMobileMenuOpen || isUserMenuOpen) && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-25 z-40"
-          onClick={() => {
-            setIsMobileMenuOpen(false);
-            setIsUserMenuOpen(false);
-          }}
-        />
-      )}
     </header>
   );
 };
