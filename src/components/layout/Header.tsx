@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, User, Menu, X, LogOut, Settings, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, LogOut, Settings, Heart , Store , Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useCart } from '@/hooks/useCart';
@@ -84,21 +84,20 @@ const Header: React.FC = () => {
     return pathname.startsWith(href);
   };
 
-  const getUserDashboardLink = () => {
-    if (!session?.user) return '/auth/signin';
-    
-    switch (session.user.role) {
-      case 'admin':
-        return '/admin';
-      case 'vendor':
-        return '/dashboard/vendor';
-      case 'buyer':
-        return '/dashboard/buyer';
-      default:
-        return '/dashboard/buyer';
-    }
-  };
-
+const getUserDashboardLink = () => {
+  if (!session?.user) return '/auth/signin';
+  
+  switch (session.user.role) {
+    case 'admin':
+      return '/admin';
+    case 'vendor':
+      return '/dashboard/vendor';
+    case 'buyer':
+      return '/dashboard/buyer';
+    default:
+      return '/dashboard/buyer';
+  }
+};
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,40 +203,68 @@ const Header: React.FC = () => {
                     className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-[60]"
                   >
                     <div className="py-1">
-                      {session ? (
-                        <>
-                          <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                            <div className="font-medium">{session.user.name}</div>
-                            <div className="text-gray-500">{session.user.email}</div>
-                          </div>
-                          
-                          <Link
-                            href={getUserDashboardLink()}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            <Settings className="w-4 h-4 mr-2" />
-                            Dashboard
-                          </Link>
-                          
-                          <Link
-                            href="/profile"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            <User className="w-4 h-4 mr-2" />
-                            Mon Profil
-                          </Link>
-                          
-                          <button
-                            onClick={handleSignOut}
-                            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                          >
-                            <LogOut className="w-4 h-4 mr-2" />
-                            Se déconnecter
-                          </button>
-                        </>
-                      ) : (
+                     {session ? (
+  <>
+    <div className="px-4 py-2 text-sm text-gray-700 border-b">
+      <div className="font-medium">{session.user.name}</div>
+      <div className="text-gray-500">{session.user.email}</div>
+      {session.user.role === 'admin' && (
+        <div className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mt-1 inline-block">
+          🛡️ Administrateur
+        </div>
+      )}
+    </div>
+    
+    <Link
+      href={getUserDashboardLink()}
+      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+      onClick={() => setIsUserMenuOpen(false)}
+    >
+      <Settings className="w-4 h-4 mr-2" />
+      {session.user.role === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
+    </Link>
+    
+    {/* Accès rapide admin si c'est un admin */}
+    {session.user.role === 'admin' && (
+      <>
+        <Link
+          href="/admin/vendors"
+          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+          onClick={() => setIsUserMenuOpen(false)}
+        >
+          <Store className="w-4 h-4 mr-2" />
+          Gérer les vendeurs
+        </Link>
+        
+        <Link
+          href="/admin/users"
+          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+          onClick={() => setIsUserMenuOpen(false)}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          Gérer les utilisateurs
+        </Link>
+      </>
+    )}
+    
+    <Link
+      href="/profile"
+      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+      onClick={() => setIsUserMenuOpen(false)}
+    >
+      <User className="w-4 h-4 mr-2" />
+      Mon Profil
+    </Link>
+    
+    <button
+      onClick={handleSignOut}
+      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+    >
+      <LogOut className="w-4 h-4 mr-2" />
+      Se déconnecter
+    </button>
+  </>
+) : (
                         <>
                           <Link
                             href="/auth/signin"

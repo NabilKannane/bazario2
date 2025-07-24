@@ -1,3 +1,4 @@
+// src/middleware.ts
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 
@@ -15,15 +16,23 @@ export default withAuth(
     if (token?.role) {
       const role = token.role as string;
 
-      // Empêcher l'accès non autorisé
+      // Protection des routes admin
       if (pathname.startsWith('/admin') && role !== 'admin') {
+        console.log('❌ Non-admin trying to access admin area:', { role, pathname });
+        // Rediriger vers le dashboard approprié selon le rôle
+        if (role === 'vendor') {
+          return NextResponse.redirect(new URL('/dashboard/vendor', req.url));
+        } else {
+          return NextResponse.redirect(new URL('/dashboard/buyer', req.url));
+        }
+      }
+
+      // Protection des routes vendor
+      if (pathname.startsWith('/dashboard/vendor') && role !== 'vendor' && role !== 'admin') {
         return NextResponse.redirect(new URL('/dashboard/buyer', req.url));
       }
 
-      if (pathname.startsWith('/dashboard/vendor') && role !== 'vendor') {
-        return NextResponse.redirect(new URL('/dashboard/buyer', req.url));
-      }
-
+      // Protection des routes buyer  
       if (pathname.startsWith('/dashboard/buyer') && role === 'vendor') {
         return NextResponse.redirect(new URL('/dashboard/vendor', req.url));
       }
@@ -41,6 +50,18 @@ export default withAuth(
             return NextResponse.redirect(new URL('/dashboard/vendor', req.url));
           case 'buyer':
             return NextResponse.redirect(new URL('/dashboard/buyer', req.url));
+        }
+      }
+
+      // Redirection depuis /admin pour les non-admins
+      if (pathname === '/admin' && role !== 'admin') {
+        switch (role) {
+          case 'vendor':
+            return NextResponse.redirect(new URL('/dashboard/vendor', req.url));
+          case 'buyer':
+            return NextResponse.redirect(new URL('/dashboard/buyer', req.url));
+          default:
+            return NextResponse.redirect(new URL('/', req.url));
         }
       }
     }
