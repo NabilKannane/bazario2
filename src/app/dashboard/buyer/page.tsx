@@ -319,12 +319,6 @@ const BuyerDashboardPage: React.FC = () => {
                       Ma liste de souhaits
                     </Button>
                   </Link>
-                  <Link href="/dashboard/buyer/messages">
-                    <Button className="w-full mb-2 justify-start" variant="outline">
-                      <Gift className="w-4 h-4 mr-3" />
-                      Mes messages
-                    </Button>
-                  </Link>
                 </CardContent>
               </Card>
             </motion.div>
