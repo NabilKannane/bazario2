@@ -120,21 +120,11 @@ const AdminPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Dashboard Admin 🛡️
+              Dashboard Admin
             </h1>
             <p className="text-gray-600 mt-1">
               Vue d'ensemble de votre plateforme Bazario
             </p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button variant="outline">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Rapport complet
-            </Button>
-            <Button>
-              <UserCheck className="w-4 h-4 mr-2" />
-              Gérer les vendeurs
-            </Button>
           </div>
         </div>
       </div>
@@ -229,6 +219,60 @@ const AdminPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      {/* Actions rapides */}
+      <div className="animate-slide-up mb-8" style={{ animationDelay: '400ms' }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Actions rapides d'administration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                 <Link href="/admin/boutique">
+                <div className="p-6 border-2 border-dashed border-stone-300 rounded-lg hover:border-stone-500 hover:bg-yellow-50 transition-colors cursor-pointer group">
+                  <div className="text-center">
+                    <CheckCircle className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
+                    <p className="font-medium text-gray-900">Gérer Boutique Bazario</p>
+                    <p className="text-sm text-gray-500 mt-1">Boutique Admin</p>
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/admin/vendors">
+                <div className="p-6 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors cursor-pointer">
+                  <div className="text-center">
+                    <Store className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+                    <p className="font-medium text-gray-900">Gérer les vendeurs</p>
+                    <p className="text-sm text-gray-500 mt-1">{mockStats.pendingVendors} en attente</p>
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/admin/users">
+                <div className="p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
+                  <div className="text-center">
+                    <Users className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                    <p className="font-medium text-gray-900">Gérer les utilisateurs</p>
+                    <p className="text-sm text-gray-500 mt-1">{mockStats.totalUsers} utilisateurs</p>
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/admin/analytics">
+                <div className="p-6 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+                  <div className="text-center">
+                    <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                    <p className="font-medium text-gray-900">Analytics avancées</p>
+                    <p className="text-sm text-gray-500 mt-1">Rapports détaillés</p>
+                  </div>
+                </div>
+              </Link>
+
+           
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Nouveaux utilisateurs */}
@@ -312,57 +356,7 @@ const AdminPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Actions rapides */}
-      <div className="animate-slide-up" style={{ animationDelay: '400ms' }}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Actions rapides d'administration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link href="/admin/vendors">
-                <div className="p-6 border-2 border-dashed border-orange-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors cursor-pointer group">
-                  <div className="text-center">
-                    <Store className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Gérer les vendeurs</p>
-                    <p className="text-sm text-gray-500 mt-1">{mockStats.pendingVendors} en attente</p>
-                  </div>
-                </div>
-              </Link>
 
-              <Link href="/admin/users">
-                <div className="p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
-                  <div className="text-center">
-                    <Users className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Gérer les utilisateurs</p>
-                    <p className="text-sm text-gray-500 mt-1">{mockStats.totalUsers} utilisateurs</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/admin/analytics">
-                <div className="p-6 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
-                  <div className="text-center">
-                    <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Analytics avancées</p>
-                    <p className="text-sm text-gray-500 mt-1">Rapports détaillés</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/admin/settings">
-                <div className="p-6 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                  <div className="text-center">
-                    <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                    <p className="font-medium text-gray-900">Configuration</p>
-                    <p className="text-sm text-gray-500 mt-1">Paramètres plateforme</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 };

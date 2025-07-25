@@ -40,6 +40,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       href: '/admin',
       icon: LayoutDashboard,
       badge: null,
+    }
+    ,
+    {
+      name: 'Boutique Bazario',
+      href: '/admin/boutique',
+      icon: Store,
+      badgeColor: 'bg-yellow-500',
     },
     {
       name: 'Utilisateurs',
@@ -273,13 +280,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
             {/* Actions header */}
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              {/* Notifications */}
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="w-5 h-5" />
-                <Badge className="absolute -top-1 -right-1 w-5 h-5 text-xs bg-red-500">
-                  3
-                </Badge>
-              </Button>
 
               {/* Retour au site */}
               <Link href="/">

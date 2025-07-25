@@ -102,13 +102,10 @@ const AdminUsersPage: React.FC = () => {
               Gérez tous les utilisateurs de la plateforme
             </p>
           </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              Exporter
-            </Button>
-            <Button>
-              <UserCheck className="w-4 h-4 mr-2" />
+          <div className=" text-gray-800 mt-4 sm:mt-0 flex space-x-3">
+          
+            <Button className='text-gray-800 bg-blue-50 shadow-md'>
+              <UserCheck className="w-4 h-4 mr-2 text-gray-800 " />
               Nouvel utilisateur
             </Button>
           </div>
