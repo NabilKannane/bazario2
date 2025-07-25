@@ -70,24 +70,11 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
       badgeColor: 'bg-red-500',
     },
     {
-      name: 'Analytics',
-      href: '/dashboard/vendor/analytics',
-      icon: BarChart3,
-      badge: null,
-    },
-    {
       name: 'Mon Atelier',
       href: '/dashboard/vendor/profile',
       icon: Store,
       badge: null,
-    },
-    {
-      name: 'Messages',
-      href: '/dashboard/vendor/messages',
-      icon: MessageSquare,
-      badge: '2',
-      badgeColor: 'bg-blue-500',
-    },
+    }
   ];
 
   const secondaryNavigation = [

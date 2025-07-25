@@ -205,7 +205,7 @@ const SignInPage: React.FC = () => {
             </form>
 
             {/* Séparateur */}
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
@@ -215,7 +215,7 @@ const SignInPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Connexion Google */}
+              {/* Connexion Google
               <Button
                 type="button"
                 variant="outline"
@@ -242,8 +242,8 @@ const SignInPage: React.FC = () => {
                   />
                 </svg>
                 Google
-              </Button>
-            </div>
+              </Button> 
+            </div> 
 
             {/* Lien vers inscription */}
             <div className="mt-6 text-center">

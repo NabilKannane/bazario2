@@ -290,7 +290,7 @@ const RegisterPage: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full text-white bg-orange-700 mb-4"
                 loading={isLoading}
                 disabled={isLoading}
                 size="lg"
