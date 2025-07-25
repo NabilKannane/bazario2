@@ -81,44 +81,9 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
     {
       name: 'Paramètres',
       href: '/dashboard/vendor/settings',
-      icon: Settings,
-    },
-    {
-      name: 'Aide',
-      href: '/help',
-      icon: HelpCircle,
-    },
+      icon: Settings
+    }
   ];
-
-  // Mock notifications
-  const notifications = [
-    {
-      id: 1,
-      title: 'Nouvelle commande',
-      message: 'Marie Dupont a commandé votre vase en céramique',
-      time: '5 min',
-      read: false,
-      type: 'order',
-    },
-    {
-      id: 2,
-      title: 'Stock faible',
-      message: 'Il ne reste que 2 unités de "Bol en grès émaillé"',
-      time: '1h',
-      read: false,
-      type: 'warning',
-    },
-    {
-      id: 3,
-      title: 'Nouveau message',
-      message: 'Pierre Martin vous a envoyé un message',
-      time: '2h',
-      read: true,
-      type: 'message',
-    },
-  ];
-
-  const unreadNotifications = notifications.filter(n => !n.read).length;
 
   const isActiveLink = (href: string) => {
     if (href === '/dashboard/vendor') {
@@ -383,85 +348,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
 
             {/* Actions header */}
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              {/* Notifications */}
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="relative"
-                >
-                  <Bell className="w-5 h-5" />
-                  {unreadNotifications > 0 && (
-                    <Badge className="absolute -top-1 -right-1 w-5 h-5 text-xs bg-red-500">
-                      {unreadNotifications}
-                    </Badge>
-                  )}
-                </Button>
-
-                {/* Dropdown notifications */}
-                <AnimatePresence>
-                  {notificationsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                      className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
-                    >
-                      <div className="p-4 border-b border-gray-200">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setNotificationsOpen(false)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="max-h-96 overflow-y-auto">
-                        {notifications.map((notification) => (
-                          <div
-                            key={notification.id}
-                            className={cn(
-                              "p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer",
-                              !notification.read && "bg-blue-50"
-                            )}
-                          >
-                            <div className="flex items-start">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">
-                                  {notification.title}
-                                </p>
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {notification.message}
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  il y a {notification.time}
-                                </p>
-                              </div>
-                              {!notification.read && (
-                                <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 mt-2"></div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="p-4 border-t border-gray-200">
-                        <Link
-                          href="/dashboard/vendor/notifications"
-                          className="text-sm text-orange-600 hover:text-orange-500 font-medium"
-                          onClick={() => setNotificationsOpen(false)}
-                        >
-                          Voir toutes les notifications
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
+  
               {/* Bouton voir la boutique */}
               <Link href={`/artisans/${session?.user?.id}`}>
                 <Button variant="outline" size="sm">

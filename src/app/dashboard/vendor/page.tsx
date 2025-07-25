@@ -155,82 +155,70 @@ const VendorDashboard: React.FC = () => {
                 <option value="90d">3 derniers mois</option>
                 <option value="1y">Année en cours</option>
               </select>
-              <Button>
-                <Download className="w-4 h-4 mr-2" />
-                Exporter
-              </Button>
             </div>
           </div>
         </motion.div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            {
-              title: 'Produits',
-              value: mockStats.totalProducts,
-              icon: Package,
-              color: 'text-blue-600',
-              bgColor: 'bg-blue-100',
-              change: '+2 ce mois',
-              changeType: 'positive'
-            },
-            {
-              title: 'Ventes totales',
-              value: mockStats.totalSales,
-              icon: ShoppingCart,
-              color: 'text-green-600',
-              bgColor: 'bg-green-100',
-              change: '+12 ce mois',
-              changeType: 'positive'
-            },
-            {
-              title: 'Chiffre d\'affaires',
-              value: `${mockStats.totalRevenue.toFixed(2)}€`,
-              icon: DollarSign,
-              color: 'text-orange-600',
-              bgColor: 'bg-orange-100',
-              change: `+${mockStats.monthlyRevenue.toFixed(2)}€ ce mois`,
-              changeType: 'positive'
-            },
-            {
-              title: 'Vues totales',
-              value: mockStats.totalViews.toLocaleString(),
-              icon: Eye,
-              color: 'text-purple-600',
-              bgColor: 'bg-purple-100',
-              change: '+234 ce mois',
-              changeType: 'positive'
-            }
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                      <p className={`text-xs mt-1 ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
-                        {stat.change}
-                      </p>
-                    </div>
-                    <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
+        {/* Action rapide */}
+         <div className="bg-white mb-8"> 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Actions rapides</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Link href="/dashboard/vendor/products/new">
+                  <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors cursor-pointer group">
+                    <div className="text-center">
+                      <Plus className="w-8 h-8 text-gray-400 group-hover:text-orange-500 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Ajouter un produit</p>
+                      <p className="text-sm text-gray-500 mt-1">Créer une nouvelle création</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+                </Link>
+
+                <Link href="/dashboard/vendor/orders">
+                  <div className="p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
+                    <div className="text-center">
+                      <ShoppingCart className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Gérer les commandes</p>
+                      <p className="text-sm text-gray-500 mt-1">{mockStats.pendingOrders} en attente</p>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* <Link href="/dashboard/vendor/analytics">
+                  <div className="p-6 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+                    <div className="text-center">
+                      <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Voir les stats</p>
+                      <p className="text-sm text-gray-500 mt-1">Analyser les performances</p>
+                    </div>
+                  </div>
+                </Link> */}
+
+                <Link href="/dashboard/vendor/profile">
+                  <div className="p-6 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
+                    <div className="text-center">
+                      <Package className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                      <p className="font-medium text-gray-900">Mon profil</p>
+                      <p className="text-sm text-gray-500 mt-1">Gérer mon atelier</p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+        </div> 
 
         {/* Alertes */}
-        {(mockStats.pendingOrders > 0 || mockStats.lowStockProducts > 0) && (
+        {/* {(mockStats.pendingOrders > 0 || mockStats.lowStockProducts > 0) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -259,7 +247,7 @@ const VendorDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </motion.div>
-        )}
+        )} */}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Commandes récentes */}
@@ -268,7 +256,7 @@ const VendorDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card>
+            <Card className='bg-white '>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Commandes récentes</CardTitle>
@@ -312,7 +300,7 @@ const VendorDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card>
+            <Card className='bg-white'>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Produits populaires</CardTitle>
@@ -356,61 +344,7 @@ const VendorDashboard: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Actions rapides */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle>Actions rapides</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Link href="/dashboard/vendor/products/new">
-                  <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors cursor-pointer group">
-                    <div className="text-center">
-                      <Plus className="w-8 h-8 text-gray-400 group-hover:text-orange-500 mx-auto mb-2" />
-                      <p className="font-medium text-gray-900">Ajouter un produit</p>
-                      <p className="text-sm text-gray-500 mt-1">Créer une nouvelle création</p>
-                    </div>
-                  </div>
-                </Link>
 
-                <Link href="/dashboard/vendor/orders">
-                  <div className="p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
-                    <div className="text-center">
-                      <ShoppingCart className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                      <p className="font-medium text-gray-900">Gérer les commandes</p>
-                      <p className="text-sm text-gray-500 mt-1">{mockStats.pendingOrders} en attente</p>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link href="/dashboard/vendor/analytics">
-                  <div className="p-6 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
-                    <div className="text-center">
-                      <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                      <p className="font-medium text-gray-900">Voir les stats</p>
-                      <p className="text-sm text-gray-500 mt-1">Analyser les performances</p>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link href="/dashboard/vendor/profile">
-                  <div className="p-6 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                    <div className="text-center">
-                      <Package className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                      <p className="font-medium text-gray-900">Mon profil</p>
-                      <p className="text-sm text-gray-500 mt-1">Gérer mon atelier</p>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </div>
   );

@@ -238,19 +238,37 @@ const VendorOrdersPage: React.FC = () => {
               Gérez et suivez vos commandes en temps réel
             </p>
           </div>
-          <div className="mt-4 sm:mt-0 flex gap-3">
-            <Button variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              Exporter
-            </Button>
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              Filtres avancés
-            </Button>
-          </div>
         </div>
       </motion.div>
 
+
+ {/* Recherche et filtres */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="mb-6"
+      >
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    type="text"
+                    placeholder="Rechercher par numéro, client ou produit..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+      
       {/* Statistiques rapides */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
         {[
@@ -284,32 +302,7 @@ const VendorOrdersPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Recherche et filtres */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="mb-6"
-      >
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    type="text"
-                    placeholder="Rechercher par numéro, client ou produit..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+     
 
       {/* Liste des commandes */}
       <motion.div
@@ -348,7 +341,7 @@ const VendorOrdersPage: React.FC = () => {
                       key={order.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="border border-gray-200 rounded-lg p-6 hover:bg-gray-50 transition-colors"
+                      className="shadow-sm bg-gray-50 rounded-lg p-6 hover:bg-white transition-colors"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-4">

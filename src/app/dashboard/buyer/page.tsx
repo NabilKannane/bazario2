@@ -26,10 +26,7 @@ const mockBuyerData = {
     name: 'Sophie Martin',
     email: 'sophie.martin@email.com',
     avatar: 'SM',
-    memberSince: '2023',
-    totalOrders: 12,
-    totalSpent: 890.50,
-    favoriteCategory: 'Céramique',
+    memberSince: '2023'
   },
   recentOrders: [
     {
@@ -121,58 +118,7 @@ const BuyerDashboardPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Statistiques utilisateur */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        >
-          {[
-            { 
-              title: 'Commandes', 
-              value: profile.totalOrders.toString(), 
-              icon: Package, 
-              color: 'text-blue-600', 
-              bgColor: 'bg-blue-100' 
-            },
-            { 
-              title: 'Total dépensé', 
-              value: formatPrice(profile.totalSpent), 
-              icon: CreditCard, 
-              color: 'text-green-600', 
-              bgColor: 'bg-green-100' 
-            },
-            { 
-              title: 'Favoris', 
-              value: wishlist.length.toString(), 
-              icon: Heart, 
-              color: 'text-red-600', 
-              bgColor: 'bg-red-100' 
-            },
-            { 
-              title: 'Membre depuis', 
-              value: profile.memberSince, 
-              icon: Clock, 
-              color: 'text-purple-600', 
-              bgColor: 'bg-purple-100' 
-            },
-          ].map((stat, index) => (
-            <Card key={stat.title} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </motion.div>
+        
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Colonne principale */}
@@ -238,7 +184,7 @@ const BuyerDashboardPage: React.FC = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Liste de souhaits */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
@@ -288,7 +234,7 @@ const BuyerDashboardPage: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </motion.div> */}
 
             {/* Actions rapides */}
             <motion.div

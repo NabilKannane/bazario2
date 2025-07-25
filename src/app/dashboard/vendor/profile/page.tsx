@@ -63,7 +63,6 @@ const mockProfile = {
   businessDescription: 'Passionnée par l\'art de la céramique depuis plus de 15 ans, je crée des pièces uniques inspirées de la nature et des formes organiques. Chaque création est façonnée à la main avec amour et attention.',
   specialties: ['Céramique', 'Poterie', 'Grès', 'Émaillage'],
   bio: 'Artisan céramiste diplômée des Beaux-Arts de Lyon, j\'ai développé ma propre technique d\'émaillage qui donne à mes pièces leur caractère unique.',
-  phone: '+33 6 12 34 56 78',
   address: {
     street: '123 rue des Artisans',
     city: 'Lyon',
@@ -109,7 +108,6 @@ const VendorProfilePage: React.FC = () => {
       businessDescription: profile.businessDescription,
       specialties: profile.specialties,
       bio: profile.bio,
-      phone: profile.phone,
       address: profile.address,
       socialLinks: profile.socialLinks,
     },
@@ -174,7 +172,7 @@ const VendorProfilePage: React.FC = () => {
               Gérez votre profil public et vos informations artisan
             </p>
           </div>
-          <div className="mt-4 sm:mt-0">
+          <div className="mt-4 sm:mt-0 ">
             {!isEditing ? (
               <Button onClick={() => setIsEditing(true)}>
                 <Edit className="w-4 h-4 mr-2" />
@@ -350,20 +348,6 @@ const VendorProfilePage: React.FC = () => {
                 <CardTitle>Contact et adresse</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Téléphone */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone
-                  </label>
-                  {isEditing ? (
-                    <Input
-                      {...register('phone')}
-                      placeholder="+33 6 12 34 56 78"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{profile.phone || 'Non renseigné'}</p>
-                  )}
-                </div>
 
                 {/* Adresse */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -498,21 +482,6 @@ const VendorProfilePage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Twitter */}
-                  <div>
-                    <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                      <Twitter className="w-4 h-4 mr-2" />
-                      Twitter
-                    </label>
-                    {isEditing ? (
-                      <Input
-                        {...register('socialLinks.twitter')}
-                        placeholder="@mon_atelier"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profile.socialLinks?.twitter || 'Non renseigné'}</p>
-                    )}
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -521,58 +490,6 @@ const VendorProfilePage: React.FC = () => {
 
         {/* Sidebar droite */}
         <div className="space-y-6">
-          {/* Statistiques */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle>Statistiques</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 mr-2" />
-                    <span className="text-sm text-gray-600">Note moyenne</span>
-                  </div>
-                  <span className="font-semibold">{profile.stats.rating}/5</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Package className="w-4 h-4 text-blue-500 mr-2" />
-                    <span className="text-sm text-gray-600">Ventes totales</span>
-                  </div>
-                  <span className="font-semibold">{profile.stats.totalSales}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Award className="w-4 h-4 text-green-500 mr-2" />
-                    <span className="text-sm text-gray-600">Produits</span>
-                  </div>
-                  <span className="font-semibold">{profile.stats.totalProducts}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Clock className="w-4 h-4 text-purple-500 mr-2" />
-                    <span className="text-sm text-gray-600">Membre depuis</span>
-                  </div>
-                  <span className="font-semibold">{profile.stats.memberSince}</span>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-gray-900">{profile.stats.reviewCount}</p>
-                    <p className="text-sm text-gray-600">avis clients</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
 
           {/* Galerie d'images */}
           <motion.div
