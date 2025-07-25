@@ -226,7 +226,7 @@ const AdminPage: React.FC = () => {
             <CardTitle>Actions rapides d'administration</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
                  <Link href="/admin/boutique">
                 <div className="p-6 border-2 border-dashed border-stone-300 rounded-lg hover:border-stone-500 hover:bg-yellow-50 transition-colors cursor-pointer group">
@@ -258,7 +258,7 @@ const AdminPage: React.FC = () => {
                 </div>
               </Link>
 
-              <Link href="/admin/analytics">
+              {/* <Link href="/admin/analytics">
                 <div className="p-6 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
                   <div className="text-center">
                     <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
@@ -266,7 +266,7 @@ const AdminPage: React.FC = () => {
                     <p className="text-sm text-gray-500 mt-1">Rapports détaillés</p>
                   </div>
                 </div>
-              </Link>
+              </Link> */}
 
            
             </div>
