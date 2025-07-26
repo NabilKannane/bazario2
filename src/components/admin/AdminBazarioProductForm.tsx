@@ -581,7 +581,7 @@ const AdminBazarioProductForm: React.FC<AdminBazarioProductFormProps> = ({ produ
         </motion.div>
 
         {/* Inclusions et restrictions pour les coffrets */}
-        {(selectedType === 'coffret' || selectedType === 'experience') && (
+        {/* {(selectedType === 'coffret' || selectedType === 'experience') && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -595,7 +595,7 @@ const AdminBazarioProductForm: React.FC<AdminBazarioProductFormProps> = ({ produ
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Inclusions */}
-                <div>
+                {/* <div>
                   <label className="text-sm font-medium leading-none mb-2 block">
                     {selectedType === 'coffret' ? 'Inclusions' : 'Ce qui est inclus'}
                   </label>
@@ -627,7 +627,7 @@ const AdminBazarioProductForm: React.FC<AdminBazarioProductFormProps> = ({ produ
                 </div>
 
                 {/* Restrictions */}
-                <div>
+                {/* <div>
                   <label className="text-sm font-medium leading-none mb-2 block">
                     Restrictions et conditions
                   </label>
@@ -660,8 +660,8 @@ const AdminBazarioProductForm: React.FC<AdminBazarioProductFormProps> = ({ produ
               </CardContent>
             </Card>
           </motion.div>
-        )}
-
+        )} */} 
+        
         {/* Inventaire et statut */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -634,10 +634,7 @@ const AdminBoutiquePage: React.FC = () => {
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
-                <Button variant="outline" onClick={() => window.print()}>
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  Imprimer rapport
-                </Button>
+                
                 <Link href="/admin/boutique/products/new">
                   <Button className="bg-gradient-to-r from-orange-500 to-red-500">
                     <Plus className="w-4 h-4 mr-2" />

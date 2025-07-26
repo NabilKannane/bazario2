@@ -126,17 +126,13 @@ const AdminDashboardPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Dashboard Admin 🛡️
+              Dashboard Admin
             </h1>
             <p className="text-gray-600 mt-1">
               Vue d'ensemble de votre plateforme Bazario
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button variant="outline">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Rapport complet
-            </Button>
             <Button>
               <UserCheck className="w-4 h-4 mr-2" />
               Gérer les vendeurs
