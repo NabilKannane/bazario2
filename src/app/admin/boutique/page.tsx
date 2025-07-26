@@ -18,7 +18,8 @@ import {
   Clock,
   MoreVertical,
   Copy,
-  Store
+  Store,
+  Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -26,100 +27,104 @@ import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
+import { useUIStore } from '@/store/useUIStore';
 
-// Mock data pour les produits de la boutique Bazario
-const mockBazarioProducts = [
-  {
-    id: '1',
-    title: 'Coffret Découverte Artisans du Maroc',
-    description: 'Une sélection de produits artisanaux marocains authentiques',
-    price: 79.99,
-    images: ['https://images.unsplash.com/photo-1578662996442-48f60103fc96'],
-    category: 'Coffrets',
-    stock: 25,
-    status: 'active',
-    featured: true,
-    sales: 156,
-    views: 1250,
-    rating: 4.8,
-    reviewCount: 42,
-    createdAt: '2024-01-15',
-    sku: 'BAZ-COFFRET-001',
-    type: 'bazario'
-  },
-  {
-    id: '2',
-    title: 'Carte Cadeau Bazario 50€',
-    description: 'Carte cadeau valable sur tous les produits de la marketplace',
-    price: 50.00,
-    images: ['https://images.unsplash.com/photo-1549298916-b41d501d3772'],
-    category: 'Cartes Cadeaux',
-    stock: 999,
-    status: 'active',
-    featured: false,
-    sales: 89,
-    views: 650,
-    rating: 5.0,
-    reviewCount: 23,
-    createdAt: '2024-01-10',
-    sku: 'BAZ-GIFT-50',
-    type: 'bazario'
-  },
-  {
-    id: '3',
-    title: 'Pack Artisan Premium',
-    description: 'Sélection premium des meilleures créations artisanales',
-    price: 149.99,
-    images: ['https://images.unsplash.com/photo-1610701596061-2ecf227e85b2'],
-    category: 'Coffrets',
-    stock: 12,
-    status: 'active',
-    featured: true,
-    sales: 34,
-    views: 890,
-    rating: 4.9,
-    reviewCount: 18,
-    createdAt: '2024-01-08',
-    sku: 'BAZ-PREMIUM-001',
-    type: 'bazario'
-  },
-  {
-    id: '4',
-    title: 'Atelier Poterie - Bon d\'expérience',
-    description: 'Bon pour un atelier de poterie avec un artisan partenaire',
-    price: 85.00,
-    images: ['https://images.unsplash.com/photo-1578662996442-48f60103fc96'],
-    category: 'Expériences',
-    stock: 5,
-    status: 'draft',
-    featured: false,
-    sales: 12,
-    views: 234,
-    rating: 4.7,
-    reviewCount: 8,
-    createdAt: '2024-01-05',
-    sku: 'BAZ-EXP-POT-001',
-    type: 'bazario'
-  }
-];
+interface BazarioProduct {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  images: string[];
+  category: {
+    _id: string;
+    name: string;
+  };
+  tags: string[];
+  inventory: {
+    stock: number;
+    sku: string;
+    isUnlimited: boolean;
+  };
+  status: 'draft' | 'active' | 'inactive';
+  featured: boolean;
+  views: number;
+  rating: number;
+  reviewCount: number;
+  createdAt: string;
+  specifications?: {
+    productType?: string;
+    isBazarioProduct?: boolean;
+  };
+}
 
-// Statistiques de la boutique Bazario
-const mockBazarioStats = {
-  totalProducts: 4,
-  activeProducts: 3,
-  totalSales: 291,
-  totalRevenue: 15420.50,
-  averageRating: 4.85,
-  totalViews: 3024,
-  featuredProducts: 2,
-  draftProducts: 1
-};
+interface BazarioStats {
+  totalProducts: number;
+  activeProducts: number;
+  draftProducts: number;
+  featuredProducts: number;
+  totalViews: number;
+  averageRating: number;
+  totalRevenue: number;
+}
 
 const AdminBoutiquePage: React.FC = () => {
-  const [products, setProducts] = useState(mockBazarioProducts);
+  const [products, setProducts] = useState<BazarioProduct[]>([]);
+  const [stats, setStats] = useState<BazarioStats>({
+    totalProducts: 0,
+    activeProducts: 0,
+    draftProducts: 0,
+    featuredProducts: 0,
+    totalViews: 0,
+    averageRating: 0,
+    totalRevenue: 0,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const { addNotification } = useUIStore();
+
+  // Charger les produits Bazario depuis l'API
+  useEffect(() => {
+    loadBazarioProducts();
+  }, []);
+
+  const loadBazarioProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/admin/bazario-products');
+      
+      if (!response.ok) {
+        throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setProducts(data.products || []);
+      setStats(data.stats || {
+        totalProducts: 0,
+        activeProducts: 0,
+        draftProducts: 0,
+        featuredProducts: 0,
+        totalViews: 0,
+        averageRating: 0,
+        totalRevenue: 0,
+      });
+    } catch (error: any) {
+      console.error('Error loading Bazario products:', error);
+      setError(error.message || 'Erreur lors du chargement des produits');
+      addNotification({
+        type: 'error',
+        title: 'Erreur',
+        message: 'Impossible de charger les produits Bazario',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -141,8 +146,8 @@ const AdminBoutiquePage: React.FC = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+                         product.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.inventory.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -159,38 +164,108 @@ const AdminBoutiquePage: React.FC = () => {
     if (selectedProducts.length === filteredProducts.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(filteredProducts.map(p => p.id));
+      setSelectedProducts(filteredProducts.map(p => p._id));
     }
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-      setProducts(prev => prev.filter(p => p.id !== productId));
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/bazario-products/${productId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression');
+      }
+
+      const result = await response.json();
+      
+      addNotification({
+        type: 'success',
+        title: 'Produit supprimé',
+        message: result.message,
+      });
+
+      // Recharger la liste
+      loadBazarioProducts();
+    } catch (error: any) {
+      addNotification({
+        type: 'error',
+        title: 'Erreur',
+        message: error.message || 'Impossible de supprimer le produit',
+      });
     }
   };
 
-  const handleBulkAction = (action: 'activate' | 'deactivate' | 'delete') => {
+  const handleBulkAction = async (action: 'activate' | 'deactivate' | 'delete' | 'feature') => {
     if (selectedProducts.length === 0) return;
     
-    switch (action) {
-      case 'activate':
-        setProducts(prev => prev.map(p => 
-          selectedProducts.includes(p.id) ? { ...p, status: 'active' } : p
-        ));
-        break;
-      case 'deactivate':
-        setProducts(prev => prev.map(p => 
-          selectedProducts.includes(p.id) ? { ...p, status: 'inactive' } : p
-        ));
-        break;
-      case 'delete':
-        if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedProducts.length} produit(s) ?`)) {
-          setProducts(prev => prev.filter(p => !selectedProducts.includes(p.id)));
-        }
-        break;
+    try {
+      const response = await fetch('/api/admin/bazario-products/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action,
+          productIds: selectedProducts,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'action groupée');
+      }
+
+      const result = await response.json();
+      
+      addNotification({
+        type: 'success',
+        title: 'Action terminée',
+        message: result.message,
+      });
+
+      setSelectedProducts([]);
+      loadBazarioProducts();
+    } catch (error: any) {
+      addNotification({
+        type: 'error',
+        title: 'Erreur',
+        message: error.message || 'Erreur lors de l\'action groupée',
+      });
     }
-    setSelectedProducts([]);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Chargement des produits Bazario...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card className="bg-red-50 border-red-200">
+          <CardContent className="p-6 text-center">
+            <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-red-900 mb-2">Erreur de chargement</h3>
+            <p className="text-red-700 mb-4">{error}</p>
+            <Button onClick={loadBazarioProducts}>
+              Réessayer
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -215,9 +290,9 @@ const AdminBoutiquePage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button variant="outline">
+            <Button variant="outline" onClick={loadBazarioProducts}>
               <Eye className="w-4 h-4 mr-2" />
-              Voir la boutique
+              Actualiser
             </Button>
             <Link href="/admin/boutique/products/new">
               <Button>
@@ -234,35 +309,35 @@ const AdminBoutiquePage: React.FC = () => {
         {[
           { 
             title: 'Total Produits', 
-            value: mockBazarioStats.totalProducts, 
+            value: stats.totalProducts, 
             icon: Package, 
             color: 'text-blue-600',
             bgColor: 'bg-blue-100',
-            change: '+2 ce mois'
+            change: `${stats.activeProducts} actifs`
           },
           { 
             title: 'Produits Actifs', 
-            value: mockBazarioStats.activeProducts, 
+            value: stats.activeProducts, 
             icon: CheckCircle, 
             color: 'text-green-600',
             bgColor: 'bg-green-100',
-            change: '75% actifs'
+            change: `${Math.round((stats.activeProducts / stats.totalProducts) * 100) || 0}% du total`
           },
           { 
-            title: 'Ventes Totales', 
-            value: mockBazarioStats.totalSales, 
-            icon: ShoppingCart, 
+            title: 'En Vedette', 
+            value: stats.featuredProducts, 
+            icon: Star, 
+            color: 'text-yellow-600',
+            bgColor: 'bg-yellow-100',
+            change: 'Mis en avant'
+          },
+          { 
+            title: 'Vues Totales', 
+            value: stats.totalViews.toLocaleString(), 
+            icon: TrendingUp, 
             color: 'text-purple-600',
             bgColor: 'bg-purple-100',
-            change: '+15% ce mois'
-          },
-          { 
-            title: 'Revenus', 
-            value: `${formatPrice(mockBazarioStats.totalRevenue)}`, 
-            icon: TrendingUp, 
-            color: 'text-orange-600',
-            bgColor: 'bg-orange-100',
-            change: '+22% ce mois'
+            change: 'Toutes les vues'
           }
         ].map((stat, index) => (
           <motion.div
@@ -277,7 +352,7 @@ const AdminBoutiquePage: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-xs text-green-600 mt-1">{stat.change}</p>
+                    <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
                   </div>
                   <div className={`p-3 rounded-full ${stat.bgColor}`}>
                     <stat.icon className={`w-6 h-6 ${stat.color}`} />
@@ -337,6 +412,14 @@ const AdminBoutiquePage: React.FC = () => {
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Activer ({selectedProducts.length})
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleBulkAction('feature')}
+                  >
+                    <Star className="w-4 h-4 mr-2" />
+                    Mettre en vedette
                   </Button>
                   <Button 
                     variant="outline" 
@@ -427,7 +510,7 @@ const AdminBoutiquePage: React.FC = () => {
               <div className="space-y-4">
                 {filteredProducts.map((product) => (
                   <motion.div
-                    key={product.id}
+                    key={product._id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -435,15 +518,15 @@ const AdminBoutiquePage: React.FC = () => {
                     {/* Checkbox */}
                     <input
                       type="checkbox"
-                      checked={selectedProducts.includes(product.id)}
-                      onChange={() => handleSelectProduct(product.id)}
+                      checked={selectedProducts.includes(product._id)}
+                      onChange={() => handleSelectProduct(product._id)}
                       className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                     />
 
                     {/* Image */}
                     <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={product.images[0]}
+                        src={product.images[0] || '/placeholder-product.jpg'}
                         alt={product.title}
                         className="w-full h-full object-cover"
                       />
@@ -463,34 +546,34 @@ const AdminBoutiquePage: React.FC = () => {
                         <Badge className="bg-purple-100 text-purple-800 text-xs">
                           Bazario
                         </Badge>
+                        {product.specifications?.productType && (
+                          <Badge className="bg-blue-100 text-blue-800 text-xs">
+                            {product.specifications.productType}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>{product.category}</span>
+                        <span>{product.category.name}</span>
                         <span>{formatPrice(product.price)}</span>
-                        <span className={product.stock <= 10 ? 'text-red-600' : 'text-green-600'}>
-                          Stock: {product.stock}
+                        <span className={product.inventory.stock <= 10 && !product.inventory.isUnlimited ? 'text-red-600' : 'text-green-600'}>
+                          {product.inventory.isUnlimited ? 'Stock illimité' : `Stock: ${product.inventory.stock}`}
                         </span>
-                        <span className="text-xs text-gray-500">SKU: {product.sku}</span>
+                        <span className="text-xs text-gray-500">SKU: {product.inventory.sku}</span>
                       </div>
                     </div>
 
                     {/* Statistiques */}
                     <div className="hidden sm:flex flex-col items-center text-center px-4">
-                      <p className="text-sm font-medium text-gray-900">{product.sales}</p>
-                      <p className="text-xs text-gray-500">ventes</p>
+                      <p className="text-sm font-medium text-gray-900">{product.views}</p>
+                      <p className="text-xs text-gray-500">vues</p>
                     </div>
 
                     <div className="hidden sm:flex flex-col items-center text-center px-4">
                       <div className="flex items-center">
                         <Star className="w-3 h-3 text-yellow-400 mr-1" />
-                        <span className="text-sm font-medium text-gray-900">{product.rating}</span>
+                        <span className="text-sm font-medium text-gray-900">{product.rating.toFixed(1)}</span>
                       </div>
                       <p className="text-xs text-gray-500">({product.reviewCount})</p>
-                    </div>
-
-                    <div className="hidden sm:flex flex-col items-center text-center px-4">
-                      <p className="text-sm font-medium text-gray-900">{product.views}</p>
-                      <p className="text-xs text-gray-500">vues</p>
                     </div>
 
                     {/* Statut */}
@@ -502,12 +585,12 @@ const AdminBoutiquePage: React.FC = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      <Link href={`/admin/boutique/products/${product.id}`}>
+                      <Link href={`/admin/boutique/products/${product._id}`}>
                         <Button variant="ghost" size="sm">
                           <Eye className="w-4 h-4" />
                         </Button>
                       </Link>
-                      <Link href={`/admin/boutique/products/${product.id}/edit`}>
+                      <Link href={`/admin/boutique/products/${product._id}/edit`}>
                         <Button variant="ghost" size="sm">
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -518,7 +601,7 @@ const AdminBoutiquePage: React.FC = () => {
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleDeleteProduct(product.id)}
+                        onClick={() => handleDeleteProduct(product._id)}
                         className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="w-4 h-4" />
